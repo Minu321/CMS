@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script
+      src="https://kit.fontawesome.com/3d84ee808b.js"
+      crossorigin="anonymous"
+    ></script>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="An e-commerce for videogames, browse our selection and get you games at competitive prices"
+    />
+
+    <link href="/css/styles.css" rel="stylesheet" />
+    <title>Gamehub | Home</title>
+    <!-- Hotjar Tracking Code for https://singular-concha-6115f1.netlify.app/ -->
+    <script>
+      (function (h, o, t, j, a, r) {
+        h.hj =
+          h.hj ||
+          function () {
+            (h.hj.q = h.hj.q || []).push(arguments);
+          };
+        h._hjSettings = { hjid: 3681180, hjsv: 6 };
+        a = o.getElementsByTagName("head")[0];
+        r = o.createElement("script");
+        r.async = 1;
+        r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+        a.appendChild(r);
+      })(window, document, "https://static.hotjar.com/c/hotjar-", ".js?sv=");
+    </script>
+  </head>
+  <body class="body1">
+    <header>
+      <img src="/images/GameHub.png" alt="Gamehub logo" class="img_logo" />
+      <input type="checkbox" id="menu-checkbox" />
+      <label for="menu-checkbox" class="hamburger"
+        ><i class="fas fa-bars"></i
+      ></label>
+      <nav>
+        <ul>
+          <li><a href="index.html" class="active">Home</a></li>
+          <li><a href="shop.html" class="unactive">Shop</a></li>
+          <li><a href="about.html" class="unactive">About</a></li>
+          <li><a href="contact.html" class="unactive">Contact</a></li>
+          <li><a href="cart.html" class="unactive">Cart</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main class="main1">
+      <form action="/shop.html" id="search-form" method="get" class="searchbar">
+        <label for="search">Browse Games:</label>
+        <button type="submit">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+        <input type="text" name="search" id="search" placeholder="search" />
+      </form>
+
+      <h1 class="campaign">
+        Game of the year: <br />
+        Space war<br />
+        Get it here!
+      </h1>
+      <div class="campcontainer">
+        <img
+          src="images/Spacewar1.jpg"
+          alt="Pictures from the game space war"
+          class="img_campaign"
+        />
+      </div>
+      <a
+        class="ctabutton"
+        href="/product.html?id=26594301-ad8e-4691-a2ca-c774f50b1b21"
+        >Buy now</a
+      >
+    </main>
+    <footer>
+      <ul class="footerul">
+        <li class="footericon"><i class="fa-brands fa-snapchat"></i></li>
+        <li class="footericon"><i class="fa-brands fa-twitter"></i></li>
+        <li class="footericon"><i class="fa-brands fa-instagram"></i></li>
+        <li class="footericon"><i class="fa-brands fa-steam"></i></li>
+      </ul>
+    </footer>
+  </body>
+</html>
