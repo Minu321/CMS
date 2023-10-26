@@ -1,85 +1,24 @@
-let productId;
-let cartUpdated = false;
-
-window.addEventListener("load", () => {
-  const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
-  productId = getProductIdFromUrl();
-  const existingItemIndex = existingCart.findIndex(
-    (item) => item.productId === productId
-  );
-  if (existingItemIndex !== -1) {
-    cartUpdated = true;
-    const addToCartButton = document.getElementById("addToCartButton");
-    addToCartButton.textContent = "Go to Cart";
-  }
-});
-
-function showLoadingIndicator() {
-  const loadingElement = document.getElementById("loading");
-  loadingElement.style.display = "block";
-}
-
-function hideLoadingIndicator() {
-  const loadingElement = document.getElementById("loading");
-  loadingElement.style.display = "none";
-}
-
-showLoadingIndicator();
-
-function getProductIdFromUrl() {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get("id");
-}
-productId = getProductIdFromUrl();
-
 function fetchProductDetails(productId) {
-  const apiUrl = `https://api.noroff.dev/api/v1/gamehub/${productId}`;
+  const apiUrl = `https://gamehub.geekie.no/wp-json/wc/store/products/${productId}`;
 
-  return fetch(apiUrl)
+  return fetch(apiUrl, {
+    method: "GET",
+  })
     .then((response) => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
+
       return response.json();
     })
     .then((productData) => {
       return productData;
     })
     .catch((error) => {
-      console.error("Error fetching product data", error);
-      displayErrorMessage("An error occurred. Please try again later.");
+      console.error("Error fetching product details:", error);
       throw error;
     });
 }
-
-function updateProductPage(productData) {
-  const titleElement = document.querySelector("h1");
-  const imageElement = document.querySelector("img.shopimagebig");
-  const descriptionElement = document.querySelector("p#description");
-  const releaseElement = document.querySelector("p#release");
-  const genreElement = document.querySelector("p#genre");
-  const ageElement = document.querySelector("p#age");
-  const priceElement = document.querySelector("p#price");
-
-  hideLoadingIndicator();
-
-  titleElement.textContent = productData.title;
-  imageElement.src = productData.image;
-  imageElement.alt = `Image showing the game cover for the game ${productData.title}`;
-  descriptionElement.textContent = productData.description;
-  releaseElement.textContent = `Released: ${productData.released}`;
-  genreElement.textContent = `Genre: ${productData.genre}`;
-  ageElement.textContent = `Age Rating: ${productData.ageRating}`;
-  priceElement.textContent = `$ ${productData.price}`;
-}
-
-fetchProductDetails(productId)
-  .then((productData) => {
-    updateProductPage(productData);
-  })
-  .catch((error) => {
-    console.error("Error in fetchProductDetails:", error);
-  });
 
 function addToCart(productData) {
   const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -93,35 +32,54 @@ function addToCart(productData) {
     const newItem = {
       productId: productData.id,
       quantity: 1,
-      price: productData.price,
-      title: productData.title,
-      image: productData.image,
+      price: parseFloat(productData.prices.price) / 100,
+      title: productData.name,
+      image: productData.images[0].src,
     };
     existingCart.push(newItem);
     localStorage.setItem("cart", JSON.stringify(existingCart));
-
-    cartUpdated = true;
-
-    const addToCartButton = document.getElementById("addToCartButton");
-    addToCartButton.textContent = "Go to Cart";
-    addToCartButton.classList.add("green-button");
 
     alert("Product added to cart");
   }
 }
 
-const addToCartButton = document.getElementById("addToCartButton");
+function displayProductDetails(product) {
+  const titleElement = document.querySelector("h1");
+  const imageElement = document.querySelector(".shopimagebig");
+  const descriptionElement = document.getElementById("description");
+  const releaseElement = document.getElementById("release");
+  const genreElement = document.getElementById("genre");
+  const ageElement = document.getElementById("age");
+  const priceElement = document.getElementById("price");
+  const addToCartButton = document.getElementById("addToCartButton");
 
-addToCartButton.addEventListener("click", () => {
-  if (cartUpdated) {
-    window.location.href = "cart.html";
-  } else {
-    fetchProductDetails(productId)
-      .then((productData) => {
-        addToCart(productData);
-      })
-      .catch((error) => {
-        console.error("Error in fetchProductDetails", error);
-      });
-  }
-});
+  titleElement.textContent = product.name;
+  imageElement.src = product.images[0].src;
+  imageElement.alt = `Image showing the game cover for the game ${product.name}`;
+  descriptionElement.textContent = product.description.replace(/<\/?p>/g, "");
+  releaseElement.textContent = `Released: ${product.attributes[2].terms[0].name}`;
+  genreElement.textContent = `Genre: ${product.attributes[1].terms[0].name}`;
+  ageElement.textContent = `Age Rating: ${product.attributes[0].terms[0].name}`;
+  priceElement.textContent =
+    (parseFloat(product.prices.price) / 100).toFixed(2) +
+    ` ${product.prices.currency_symbol}`;
+
+  addToCartButton.addEventListener("click", () => {
+    addToCart(product);
+  });
+}
+
+const urlParams = new URLSearchParams(window.location.search);
+const productId = urlParams.get("id");
+
+if (productId) {
+  fetchProductDetails(productId)
+    .then((productData) => {
+      displayProductDetails(productData);
+    })
+    .catch((error) => {
+      console.error("Error in fetchProductDetails:", error);
+    });
+} else {
+  console.error("Product ID not found in URL");
+}

@@ -262,7 +262,7 @@ font-size: large;
     text-align: center;  
   }
   
-  #shopimage {
+  .shopimage {
   max-width: 100%;
   height: auto;
   margin-bottom: 10px; 

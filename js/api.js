@@ -1,5 +1,5 @@
 function fetchProducts() {
-  const apiUrl = "https://api.noroff.dev/api/v1/gamehub";
+  const apiUrl = "https://gamehub.geekie.no/wp-json/wc/store/products/";
 
   return fetch(apiUrl, {
     method: "GET",
@@ -12,10 +12,8 @@ function fetchProducts() {
       return response.json();
     })
     .then((data) => {
-      // Log the API data to the console
       console.log(data);
 
-      // Return the data so it can be used further if needed
       return data;
     })
     .catch((error) => {

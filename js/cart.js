@@ -1,4 +1,5 @@
 console.log(8);
+
 if (document.readyState == "loading") {
   document.addEventListener("DOMContentLoaded", ready);
 } else {
@@ -71,7 +72,7 @@ function updateCartTotal() {
   document.getElementsByClassName("cart-total-price")[0].innerText =
     "$" + total;
 }
-populateCartFromLocalStorage();
+
 function populateCartFromLocalStorage() {
   const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
   const cartItemContainer = document.querySelector(".cart-items");
@@ -80,40 +81,49 @@ function populateCartFromLocalStorage() {
   cartItemContainer.innerHTML = "";
 
   existingCart.forEach((item) => {
-    const cartRow = document.createElement("div");
-    cartRow.classList.add("cart-row");
-    cartRow.dataset.productId = item.productId;
+    if (item.price !== undefined) {
+      const cartRow = document.createElement("div");
+      cartRow.classList.add("cart-row");
+      cartRow.dataset.productId = item.productId;
 
-    const cartContent = `
-      <div class="cart-item cart-column">
-        <img class="cart-item-image" src="${
-          item.image
-        }" width="100" height="100" />
-        <span class="cart-item-title">${item.title}</span>
-      </div>
-      <span class="cart-price cart-column">$${item.price.toFixed(2)}</span>
-      <div class="cart-quantity cart-column">
-        <input class="cart-quantity-input" type="number" value="${
-          item.quantity
-        }" />
-        <button class="cartremove" type="button">REMOVE</button>
-      </div>
-    `;
+      const priceText = item.price
+        ? `$${item.price.toFixed(2)}`
+        : "Price Not Available";
 
-    cartRow.innerHTML = cartContent;
-    cartItemContainer.appendChild(cartRow);
+      const cartContent = `
+        <div class="cart-item cart-column">
+          <img class="cart-item-image" src="${
+            item.image
+          }" width="100" height="100" />
+          <span class="cart-item-title">${item.title}</span>
+        </div>
+        <span class="cart-price cart-column">${priceText}</span>
+        <div class "cart-quantity cart-column">
+          <input class="cart-quantity-input" type="number" value="${
+            item.quantity || 1
+          }" />
+          <button class="cartremove" type="button">REMOVE</button>
+        </div>
+      `;
 
-    total += item.price * item.quantity;
+      cartRow.innerHTML = cartContent;
+      cartItemContainer.appendChild(cartRow);
 
-    const removeButton = cartRow.querySelector(".cartremove");
-    removeButton.addEventListener("click", removeCartItem);
+      if (item.price) {
+        total += item.price * (item.quantity || 1);
+      }
 
-    const quantityInput = cartRow.querySelector(".cart-quantity-input");
-    quantityInput.addEventListener("change", quantityChanged);
+      const removeButton = cartRow.querySelector(".cartremove");
+      removeButton.addEventListener("click", removeCartItem);
+
+      const quantityInput = cartRow.querySelector(".cart-quantity-input");
+      quantityInput.addEventListener("change", quantityChanged);
+    }
   });
 
   const cartTotalPrice = document.querySelector(".cart-total-price");
-  cartTotalPrice.textContent = `$${total.toFixed(2)}`;
+  cartTotalPrice.textContent =
+    total > 0 ? `$${total.toFixed(2)}` : "Total Not Available";
   if (existingCart.length === 0) {
     cartItemContainer.innerHTML = "<p>Cart is empty</p>";
     cartTotalPrice.style.display = "none";

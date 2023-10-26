@@ -31,7 +31,7 @@ function hideErrorMessage() {
 
 fetchProducts()
   .then((productData) => {
-    const imageElement = document.querySelectorAll(".shopitem img#shopimage");
+    const imageElement = document.querySelectorAll(".shopitem img.shopimage");
     const titleElement = document.querySelectorAll(".shopitem h2#title");
     const priceElements = document.querySelectorAll(".shopitem p#price");
     const descriptionElement = document.querySelectorAll(
@@ -42,17 +42,22 @@ fetchProducts()
 
     productData.forEach((product, index) => {
       const currentImageElement = imageElement[index];
-      currentImageElement.src = product.image;
-      currentImageElement.alt = `Image showing the game cover for the game $(product.title)`;
+      currentImageElement.src = product.images[0].src;
+      currentImageElement.alt = `Image showing the game cover for the game ${product.name}`;
 
       const currentTitleElement = titleElement[index];
-      currentTitleElement.textContent = product.title;
+      currentTitleElement.textContent = product.name;
 
       const currentPriceElement = priceElements[index];
-      currentPriceElement.textContent = `${product.price}$`;
+      currentPriceElement.textContent =
+        (parseFloat(product.prices.price) / 100).toFixed(2) +
+        ` ${product.prices.currency_symbol}`;
 
       const currentDescriptionElement = descriptionElement[index];
-      currentDescriptionElement.textContent = product.description;
+      currentDescriptionElement.textContent = product.description.replace(
+        /<\/?p>/g,
+        ""
+      );
     });
   })
   .catch((error) => {
